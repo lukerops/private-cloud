@@ -9,9 +9,10 @@ locals {
   }
   version = var.versioning.version != null ? local.versions[var.versioning.version] : local.channels[var.versioning.channel]
 
+  kubeapi_ip = var.kubeapi_ip != null ? var.kubeapi_ip : local.server_nodes_hosts[0]
   envs = {
     "INSTALL_K3S_VERSION" = local.version,
-    "K3S_URL"             = "https://${local.server_nodes_hosts[0]}:6443",
+    "K3S_URL"             = "https://${local.kubeapi_ip}:6443",
   }
   server_envs = {
     "K3S_KUBECONFIG_MODE" = "664",
@@ -74,7 +75,7 @@ locals {
   kubeconf_raw = yamldecode(ssh_sensitive_resource.kubeconf.result)
   kubeconf = {
     cluster = {
-      host           = "https://${values(local.server_nodes)[0].host}:6443"
+      host           = "https://${local.kubeapi_ip}:6443"
       ca_certificate = base64decode(local.kubeconf_raw.clusters[0].cluster.certificate-authority-data)
     }
     client = {

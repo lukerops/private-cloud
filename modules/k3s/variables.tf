@@ -60,3 +60,10 @@ variable "extra_commands" {
     agent  = optional(list(string), [])
   })
 }
+
+variable "kubeapi_ip" {
+  description = "Kube API IP to connect nodes."
+  default     = null
+  type        = string
+  nullable    = true
+}

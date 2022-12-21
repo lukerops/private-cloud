@@ -20,3 +20,7 @@ output "extra_commands" {
 output "version" {
   value = local.version
 }
+
+output "kubeapi_ip" {
+  value = local.kubeapi_ip
+}
