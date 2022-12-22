@@ -30,7 +30,7 @@ resource "ssh_resource" "agent_destroy" {
 
   timeout = var.timeout
   commands = [
-    "/usr/local/bin/k3s-agent-uninstall.sh",
+    "echo \"${each.value.sudo_password}\" | sudo -k -S /usr/local/bin/k3s-agent-uninstall.sh",
   ]
 
   lifecycle {
