@@ -26,12 +26,13 @@ variable "timeout" {
 variable "server_nodes" {
   description = "List of all k3s server nodes."
   type = list(object({
-    name    = string
-    host    = string
-    user    = string
-    bastion = optional(string)
-    labels  = optional(map(string), {})
-    taints  = optional(map(string), {})
+    name          = string
+    host          = string
+    user          = string
+    sudo_password = string
+    bastion       = optional(string)
+    labels        = optional(map(string), {})
+    taints        = optional(map(string), {})
   }))
 
   validation {
@@ -44,12 +45,13 @@ variable "agent_nodes" {
   description = "List of all k3s agent nodes."
   default     = []
   type = list(object({
-    name    = string
-    host    = string
-    user    = string
-    bastion = optional(string)
-    labels  = optional(map(string), {})
-    taints  = optional(map(string), {})
+    name          = string
+    host          = string
+    user          = string
+    sudo_password = string
+    bastion       = optional(string)
+    labels        = optional(map(string), {})
+    taints        = optional(map(string), {})
   }))
 }
 
