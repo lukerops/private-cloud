@@ -1,3 +1,14 @@
+resource "time_sleep" "wait_server" {
+  create_duration = "30s"
+
+  triggers = merge(
+    ssh_resource.server_create[local.server_nodes_hosts[0]].triggers,
+    {
+      host = local.server_nodes_hosts[0]
+    },
+  )
+}
+
 resource "kubernetes_labels" "label" {
   for_each = {
     for node in concat(var.server_nodes, var.agent_nodes) : node.name => node.labels
@@ -14,4 +25,8 @@ resource "kubernetes_labels" "label" {
   }
 
   labels = each.value
+
+  depends_on = [
+    time_sleep.wait_server,
+  ]
 }
