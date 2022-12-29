@@ -33,5 +33,5 @@ provider "kubernetes" {
   client_certificate     = local.kubeconf.client.certificate
   client_key             = local.kubeconf.client.key
   cluster_ca_certificate = local.kubeconf.cluster.ca_certificate
-  host                   = local.kubeconf.cluster.host
+  host                   = "https://${values(local.server_nodes)[0].host}:6443"
 }
