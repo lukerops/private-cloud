@@ -1,5 +1,5 @@
 resource "time_sleep" "wait_server" {
-  create_duration = "30s"
+  create_duration = "10s"
 
   triggers = merge(
     ssh_resource.server_create[local.nodes_hosts[0]].triggers,
