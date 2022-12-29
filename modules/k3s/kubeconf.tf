@@ -11,7 +11,7 @@ resource "ssh_sensitive_resource" "kubeconf" {
   ]
 
   depends_on = [
-    ssh_resource.server_create,
+    time_sleep.wait_server,
   ]
 
   lifecycle {

@@ -29,7 +29,6 @@ variable "server_nodes" {
     name          = string
     host          = string
     user          = string
-    sudo_password = string
     bastion       = optional(string)
     labels        = optional(map(string), {})
     taints        = optional(map(string), {})
@@ -48,7 +47,6 @@ variable "agent_nodes" {
     name          = string
     host          = string
     user          = string
-    sudo_password = string
     bastion       = optional(string)
     labels        = optional(map(string), {})
     taints        = optional(map(string), {})

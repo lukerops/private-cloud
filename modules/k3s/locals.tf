@@ -36,9 +36,9 @@ locals {
   }
   server_nodes_commands = {
     for node in var.server_nodes : node.host => compact(flatten([
-      "{ echo \"${node.sudo_password}\"; curl -sfL https://get.k3s.io; } |",
+      "curl -sfL https://get.k3s.io |",
       [for k, v in local.server_nodes_envs[node.host] : "${k}=\"${v}\"" if v != null],
-      "sudo -kES sh -s - server",
+      "sh -s - server",
       [for k, v in node.taints : "--node-taint=\"${k}=${v}\""],
       var.extra_commands.server,
     ]))
@@ -59,9 +59,9 @@ locals {
   }
   agent_nodes_commands = {
     for node in var.agent_nodes : node.host => flatten([
-      "{ echo \"${node.sudo_password}\"; curl -sfL https://get.k3s.io; } |",
+      "curl -sfL https://get.k3s.io |",
       [for k, v in local.agent_nodes_envs[node.host] : "${k}=\"${v}\"" if v != null],
-      "sudo -kES sh -s - agent",
+      "sh -s - agent",
       [for k, v in node.taints : "--node-taint=\"${k}=${v}\""],
       var.extra_commands.agent,
     ])

@@ -26,7 +26,7 @@ resource "ssh_resource" "server_destroy" {
 
   timeout = var.timeout
   commands = [
-    "echo \"${each.value.sudo_password}\" | sudo -k -S /usr/local/bin/k3s-uninstall.sh",
+    "/usr/local/bin/k3s-uninstall.sh",
   ]
 
   lifecycle {
