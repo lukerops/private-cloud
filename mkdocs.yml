@@ -1,0 +1,28 @@
+site_name: My Docs
+
+repo_url: https://github.com/lukerops/private-cloud
+repo_name: lukerops/private-cloud
+
+theme:
+  name: material
+  language: pt-BR
+  icon:
+    repo: fontawesome/brands/git-alt
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
