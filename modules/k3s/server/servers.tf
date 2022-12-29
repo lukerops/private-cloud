@@ -1,5 +1,5 @@
 resource "ssh_resource" "server_create" {
-  for_each = local.server_nodes
+  for_each = local.nodes
 
   when         = "create"
   host         = each.key
@@ -16,7 +16,7 @@ resource "ssh_resource" "server_create" {
 }
 
 resource "ssh_resource" "server_destroy" {
-  for_each = local.server_nodes
+  for_each = local.nodes
 
   when         = "destroy"
   host         = each.key

@@ -21,17 +21,12 @@ terraform {
       source  = "hashicorp/http"
       version = ">= 3.1.0, < 4.0.0"
     }
-
-    time = {
-      source = "hashicorp/time"
-      version = ">= 0.9.1, < 1.0.0"
-    }
   }
 }
 
 provider "kubernetes" {
-  client_certificate     = local.kubeconf.client.certificate
-  client_key             = local.kubeconf.client.key
-  cluster_ca_certificate = local.kubeconf.cluster.ca_certificate
-  host                   = "https://${values(local.server_nodes)[0].host}:6443"
+  client_certificate     = var.kubeconf.client.certificate
+  client_key             = var.kubeconf.client.key
+  cluster_ca_certificate = var.kubeconf.cluster.ca_certificate
+  host                   = var.kubeconf.cluster.host
 }

@@ -2,16 +2,16 @@ resource "time_sleep" "wait_server" {
   create_duration = "30s"
 
   triggers = merge(
-    ssh_resource.server_create[local.server_nodes_hosts[0]].triggers,
+    ssh_resource.server_create[local.nodes_hosts[0]].triggers,
     {
-      host = local.server_nodes_hosts[0]
+      host = local.nodes_hosts[0]
     },
   )
 }
 
 resource "kubernetes_labels" "label" {
   for_each = {
-    for node in concat(var.server_nodes, var.agent_nodes) : node.name => node.labels
+    for node in var.nodes : node.name => node.labels
     if length(node.labels) > 0
   }
 

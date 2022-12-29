@@ -1,5 +1,5 @@
 resource "ssh_resource" "agent_create" {
-  for_each = local.agent_nodes
+  for_each = local.nodes
 
   when         = "create"
   host         = each.key
@@ -13,14 +13,10 @@ resource "ssh_resource" "agent_create" {
   triggers = {
     for k, v in [each.value.user, each.value.bastion] : k => v
   }
-
-  depends_on = [
-    ssh_resource.server_create,
-  ]
 }
 
 resource "ssh_resource" "agent_destroy" {
-  for_each = local.agent_nodes
+  for_each = local.nodes
 
   when         = "destroy"
   host         = each.key

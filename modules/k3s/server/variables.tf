@@ -23,42 +23,26 @@ variable "timeout" {
   type        = string
 }
 
-variable "server_nodes" {
+variable "nodes" {
   description = "List of all k3s server nodes."
   type = list(object({
-    name          = string
-    host          = string
-    user          = string
-    bastion       = optional(string)
-    labels        = optional(map(string), {})
-    taints        = optional(map(string), {})
+    name    = string
+    host    = string
+    user    = string
+    bastion = optional(string)
+    labels  = optional(map(string), {})
+    taints  = optional(map(string), {})
   }))
 
   validation {
-    condition     = length(var.server_nodes) > 0
+    condition     = length(var.nodes) > 0
     error_message = "Need at least 1 server node."
   }
 }
 
-variable "agent_nodes" {
-  description = "List of all k3s agent nodes."
-  default     = []
-  type = list(object({
-    name          = string
-    host          = string
-    user          = string
-    bastion       = optional(string)
-    labels        = optional(map(string), {})
-    taints        = optional(map(string), {})
-  }))
-}
-
 variable "extra_commands" {
-  default = {}
-  type = object({
-    server = optional(list(string), [])
-    agent  = optional(list(string), [])
-  })
+  default = []
+  type    = list(string)
 }
 
 variable "kubeapi_ip" {
