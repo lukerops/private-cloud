@@ -1,3 +1,14 @@
+resource "time_sleep" "wait_server" {
+  create_duration = "30s"
+
+  triggers = merge(
+    ssh_resource.server_create[local.nodes_hosts[0]].triggers,
+    {
+      host = local.nodes_hosts[0]
+    },
+  )
+}
+
 resource "ssh_sensitive_resource" "kubeconf" {
   when         = "create"
   host         = local.nodes_hosts[0]

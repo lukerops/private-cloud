@@ -1,3 +1,7 @@
+data "http" "channels" {
+  url = "https://update.k3s.io/v1-release/channels"
+}
+
 locals {
   channels = {
     for obj in jsondecode(data.http.channels.response_body).data : obj.id => obj.latest
@@ -11,7 +15,7 @@ locals {
 
   agent_envs = {
     "INSTALL_K3S_VERSION" = local.version,
-    "K3S_URL"             = var.kubeconf.cluster.host,
+    "K3S_URL"             = "https://${var.kubeapi_ip}:6443",
     "K3S_TOKEN"           = var.token,
   }
 

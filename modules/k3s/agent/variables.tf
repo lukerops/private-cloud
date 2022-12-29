@@ -51,16 +51,7 @@ variable "token" {
   type        = string
 }
 
-variable "kubeconf" {
-  description = "A configuration to add node labels."
-  type = object({
-    cluster = object({
-      host           = string
-      ca_certificate = string
-    })
-    client = object({
-      certificate = string
-      key         = string
-    })
-  })
+variable "kubeapi_ip" {
+  description = "Kube API IP to connect nodes."
+  type        = string
 }

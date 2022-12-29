@@ -1,3 +1,7 @@
+data "http" "channels" {
+  url = "https://update.k3s.io/v1-release/channels"
+}
+
 locals {
   channels = {
     for obj in jsondecode(data.http.channels.response_body).data : obj.id => obj.latest

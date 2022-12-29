@@ -28,3 +28,12 @@ terraform {
     }
   }
 }
+
+provider "kubernetes" {
+  alias = "step_1"
+
+  client_certificate     = module.k3s_servers.kubeconf.client.certificate
+  client_key             = module.k3s_servers.kubeconf.client.key
+  cluster_ca_certificate = module.k3s_servers.kubeconf.cluster.ca_certificate
+  host                   = "https://${sort([for node in module.k3s_servers.nodes : node.host])[0]}:6443"
+}

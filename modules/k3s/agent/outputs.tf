@@ -19,15 +19,9 @@ output "token" {
   sensitive = true
 }
 
-output "kubeconf" {
-  value     = var.kubeconf
-  sensitive = true
-
-  depends_on = [
-    kubernetes_labels.label,
-  ]
+output "kubeapi_ip" {
+  value = var.kubeapi_ip
 }
-
 output "version" {
   value = local.version
 }

@@ -23,7 +23,7 @@ output "kubeconf" {
   sensitive = true
 
   depends_on = [
-    kubernetes_labels.label,
+    ssh_resource.server_destroy,
   ]
 }
 
