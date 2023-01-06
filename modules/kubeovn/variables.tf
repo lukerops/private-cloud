@@ -29,7 +29,7 @@ variable "tunnel_type" {
 
 variable "node_label" {
   description = "The node label to deploy OVN DB."
-  default = "node-role.kubernetes.io/master"
+  default = "node-role.kubernetes.io/control-plane"
   type = string
 }
 
