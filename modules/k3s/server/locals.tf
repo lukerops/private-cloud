@@ -5,11 +5,11 @@ data "http" "channels" {
 locals {
   channels = {
     for obj in jsondecode(data.http.channels.response_body).data : obj.id => obj.latest
-    if contains(["stable", "latest", "testing"], obj.id)
+    if contains(keys(obj), "latest") && contains(["stable", "latest", "testing"], obj.id)
   }
   versions = {
     for obj in jsondecode(data.http.channels.response_body).data : obj.id => obj.latest
-    if !contains(["stable", "latest", "testing"], obj.id)
+    if contains(keys(obj), "latest") && !contains(["stable", "latest", "testing"], obj.id)
   }
   version = var.versioning.version != null ? local.versions[var.versioning.version] : local.channels[var.versioning.channel]
 
