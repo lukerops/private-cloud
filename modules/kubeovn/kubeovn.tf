@@ -23,7 +23,6 @@ resource "ssh_resource" "install" {
     join(" ", [
       "/tmp/kubeovn_tf.sh",
       "${local.script_url_base}/install.sh",
-      local.version,
       var.node_label,
       var.pod_cidr,
       cidrhost(var.pod_cidr, 1),
@@ -41,18 +40,16 @@ resource "ssh_resource" "install" {
     set -euo pipefail
 
     URL=$1
-    VERSION=$2
-    LABEL=$3
-    POD=$4
-    POD_GATEWAY=$5
-    SVC=$6
-    JOIN=$7
-    TUNNEL=$8
+    LABEL=$2
+    POD=$3
+    POD_GATEWAY=$4
+    SVC=$5
+    JOIN=$6
+    TUNNEL=$7
 
     mkdir -p /tmp/kubeovn
     cd /tmp/kubeovn
     curl -sfL $URL | sed \
-      -e "s|^VERSION=\".*\"|VERSION=\"$VERSION\"|" \
       -e "s|^LABEL=\".*\"|LABEL=\"$LABEL\"|" \
       -e "s|^POD_CIDR=\".*\"|POD_CIDR=\"$POD\"|" \
       -e "s|^POD_GATEWAY=\".*\"|POD_GATEWAY=\"$POD_GATEWAY\"|" \
