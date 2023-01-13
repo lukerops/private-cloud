@@ -38,6 +38,7 @@ locals {
       "curl -sfL https://get.k3s.io |",
       [for k, v in local.nodes_envs[node.host] : "${k}=\"${v}\"" if v != null],
       "sh -s - server",
+      "--tls-san=${local.kubeapi_ip}",
       [for k, v in node.taints : "--node-taint=\"${k}=${v}\""],
       var.extra_commands,
     ]))
