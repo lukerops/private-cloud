@@ -1,4 +1,6 @@
 resource "helm_release" "cert_manager" {
+  provider = helm.step_1
+
   name       = "cert-manager"
   repository = "https://charts.jetstack.io"
   chart      = "cert-manager"

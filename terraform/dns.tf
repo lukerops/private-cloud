@@ -1,4 +1,6 @@
 resource "helm_release" "coredns" {
+  provider = helm.step_1
+
   name       = "coredns"
   repository = "https://coredns.github.io/helm"
   chart      = "coredns"

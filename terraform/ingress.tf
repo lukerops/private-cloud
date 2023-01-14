@@ -1,4 +1,6 @@
 resource "helm_release" "traefik" {
+  provider = helm.step_1
+
   name       = "traefik"
   repository = "https://helm.traefik.io/traefik"
   chart      = "traefik"

@@ -1,4 +1,6 @@
 resource "helm_release" "metallb" {
+  provider = helm.step_1
+
   name       = "metallb"
   repository = "https://metallb.github.io/metallb"
   chart      = "metallb"

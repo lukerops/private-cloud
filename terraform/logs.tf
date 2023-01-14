@@ -1,4 +1,6 @@
 resource "helm_release" "loki_stack" {
+  provider = helm.step_1
+
   name       = "loki-stack"
   repository = "https://grafana.github.io/helm-charts"
   chart      = "loki-stack"

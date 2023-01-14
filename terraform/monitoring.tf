@@ -1,4 +1,6 @@
 resource "helm_release" "kube_prometheus" {
+  provider = helm.step_1
+
   name       = "kube-prometheus"
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"

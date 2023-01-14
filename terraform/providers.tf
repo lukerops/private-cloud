@@ -43,20 +43,33 @@ provider "kubernetes" {
   host                   = "https://${sort([for node in module.k3s_servers.nodes : node.host])[0]}:6443"
 }
 
+provider "helm" {
+  alias = "step_1"
+
+  kubernetes {
+    client_certificate     = module.k3s_servers.kubeconf.client.certificate
+    client_key             = module.k3s_servers.kubeconf.client.key
+    cluster_ca_certificate = module.k3s_servers.kubeconf.cluster.ca_certificate
+    host                   = time_sleep.wait_kubernetes_step_1.triggers.kubeconf_host
+  }
+}
+
 provider "kubernetes" {
   alias = "step_2"
 
   client_certificate     = module.k3s_servers.kubeconf.client.certificate
   client_key             = module.k3s_servers.kubeconf.client.key
   cluster_ca_certificate = module.k3s_servers.kubeconf.cluster.ca_certificate
-  host                   = time_sleep.wait_helm.triggers.kubeconf_host
+  host                   = time_sleep.wait_helm_step_1.triggers.kubeconf_host
 }
 
 provider "helm" {
+  alias = "step_2"
+
   kubernetes {
     client_certificate     = module.k3s_servers.kubeconf.client.certificate
     client_key             = module.k3s_servers.kubeconf.client.key
     cluster_ca_certificate = module.k3s_servers.kubeconf.cluster.ca_certificate
-    host                   = time_sleep.wait_kubeapi_ip.triggers.kubeconf_host
+    host                   = time_sleep.wait_kubernetes_step_2.triggers.kubeconf_host
   }
 }
