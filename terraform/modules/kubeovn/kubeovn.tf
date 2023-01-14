@@ -18,7 +18,7 @@ resource "ssh_resource" "install" {
   bastion_host = var.node.bastion
   agent        = true
 
-  timeout  = var.timeout
+  timeout = var.timeout
   commands = [
     join(" ", [
       "/tmp/kubeovn_tf.sh",
@@ -35,7 +35,7 @@ resource "ssh_resource" "install" {
   file {
     destination = "/tmp/kubeovn_tf.sh"
     permissions = "0744"
-    content = <<-EOT
+    content     = <<-EOT
     #!/usr/bin/env bash
     set -euo pipefail
 
@@ -76,7 +76,7 @@ resource "ssh_resource" "uninstall" {
   bastion_host = var.node.bastion
   agent        = true
 
-  timeout  = var.timeout
+  timeout = var.timeout
   commands = [
     "curl -sfL ${local.script_url_base}/cleanup.sh | sudo bash -"
   ]
