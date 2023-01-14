@@ -30,6 +30,7 @@ resource "time_sleep" "wait_helm" {
 
   depends_on = [
     helm_release.metallb,
+    helm_release.traefik,
     helm_release.cert_manager,
   ]
 }
