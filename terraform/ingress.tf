@@ -6,7 +6,7 @@ resource "helm_release" "traefik" {
   chart      = "traefik"
   version    = "10.24.3"
 
-  namespace        = "traefik-system"
+  namespace        = "traefik"
   create_namespace = true
 
   # Não pode esperar porque as configurações do load-balance acontecem
@@ -48,11 +48,9 @@ resource "kubernetes_manifest" "traefik_dashboard_certificate" {
     <<-EOT
     apiVersion: cert-manager.io/v1
     kind: Certificate
-
     metadata:
       name: traefik-dashboard
       namespace: ${helm_release.traefik.namespace}
-
     spec:
       dnsNames:
         - traefik.network.k8s.homecluster.local
@@ -71,22 +69,18 @@ resource "kubernetes_manifest" "traefik_dashboard" {
     <<-EOT
     apiVersion: traefik.containo.us/v1alpha1
     kind: IngressRoute
-
     metadata:
       name: dashboard
       namespace: ${helm_release.traefik.namespace}
-
     spec:
       entryPoints:
         - websecure
-
       routes:
         - match: Host(`${kubernetes_manifest.traefik_dashboard_certificate.manifest.spec.dnsNames[0]}`)
           kind: Rule
           services:
             - name: api@internal
               kind: TraefikService
-
       tls:
         secretName: ${kubernetes_manifest.traefik_dashboard_certificate.manifest.spec.secretName}
     EOT
