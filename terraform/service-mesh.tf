@@ -143,7 +143,13 @@ resource "helm_release" "linkerd_control_plane" {
     identity:
       issuer:
         scheme: kubernetes.io/tls
+    podMonitor:
+      enabled: true
     EOT
+  ]
+
+  depends_on = [
+    helm_release.kube_prometheus,
   ]
 }
 
@@ -163,6 +169,9 @@ resource "helm_release" "linkerd_viz" {
     <<-EOT
     linkerdNamespace: ${helm_release.linkerd_crds.namespace}
     linkerdVersion: ${helm_release.linkerd_control_plane.metadata[0].app_version}
+    prometheusUrl: http://prometheus-operated.${helm_release.kube_prometheus.namespace}.svc.cluster.local:9090
+    prometheus:
+      enabled: false
     EOT
   ]
 }
