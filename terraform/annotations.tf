@@ -81,19 +81,3 @@ resource "kubernetes_annotations" "cert_manager_namespace" {
     "linkerd.io/inject" = "enabled"
   }
 }
-
-resource "kubernetes_annotations" "kube_prometheus_namespace" {
-  provider = kubernetes.step_2
-
-  api_version   = "v1"
-  kind          = "Namespace"
-  field_manager = "Terraform-${random_id.annotation_filed_manager_id.hex}"
-
-  metadata {
-    name = helm_release.kube_prometheus.namespace
-  }
-
-  annotations = {
-    "linkerd.io/inject" = "enabled"
-  }
-}
