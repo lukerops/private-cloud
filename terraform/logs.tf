@@ -6,7 +6,7 @@ resource "helm_release" "loki_stack" {
   chart      = "loki-stack"
   version    = "2.8.9"
 
-  namespace        = "loki-system"
+  namespace        = "loki"
   create_namespace = true
   wait             = true
   wait_for_jobs    = true
