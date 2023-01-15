@@ -13,15 +13,17 @@ resource "helm_release" "cert_manager" {
   values = [
     <<-EOT
     installCRDs: true
-
     prometheus:
       servicemonitor:
         enabled: true
-
     webhook:
       networkPolicy:
         enabled: false
     EOT
+  ]
+
+  depends_on = [
+    helm_release.kube_prometheus,
   ]
 }
 
