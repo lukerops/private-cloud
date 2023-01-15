@@ -99,11 +99,25 @@ resource "kubernetes_manifest" "linkerd_certificate" {
   )
 }
 
+resource "time_sleep" "wait_linkerd_certificate_secret" {
+  create_duration = "60s"
+
+  triggers = {
+    secretName = kubernetes_manifest.linkerd_certificate.manifest.spec.secretName
+  }
+
+  lifecycle {
+    replace_triggered_by = [
+      kubernetes_manifest.linkerd_certificate.manifest,
+    ]
+  }
+}
+
 data "kubernetes_secret" "linkerd_certificate" {
   provider = kubernetes.step_2
 
   metadata {
-    name      = kubernetes_manifest.linkerd_certificate.manifest.spec.secretName
+    name      = time_sleep.wait_linkerd_certificate_secret.triggers.secretName
     namespace = kubernetes_namespace.linkerd.metadata[0].name
   }
 }
