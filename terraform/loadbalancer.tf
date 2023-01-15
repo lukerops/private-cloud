@@ -18,7 +18,6 @@ resource "kubernetes_manifest" "metallb_l2advertisement" {
     <<-EOT
     apiVersion: metallb.io/v1beta1
     kind: L2Advertisement
-
     metadata:
       name: production
       namespace: ${helm_release.metallb.namespace}
@@ -33,11 +32,9 @@ resource "kubernetes_manifest" "metallb_ipaddresspool" {
     <<-EOT
     apiVersion: metallb.io/v1beta1
     kind: IPAddressPool
-
     metadata:
       name: cloud-provider
       namespace: ${helm_release.metallb.namespace}
-
     spec:
       addresses:
         - 10.254.0.208/28
