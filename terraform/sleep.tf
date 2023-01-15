@@ -24,7 +24,17 @@ resource "time_sleep" "wait_helm_step_1" {
     helm_release.metallb,
     helm_release.traefik,
     helm_release.cert_manager,
+    helm_release.kube_prometheus,
   ]
+
+  lifecycle {
+    replace_triggered_by = [
+      helm_release.metallb,
+      helm_release.traefik,
+      helm_release.cert_manager,
+      helm_release.kube_prometheus,
+    ]
+  }
 }
 
 resource "time_sleep" "wait_kubernetes_step_2" {
@@ -35,7 +45,5 @@ resource "time_sleep" "wait_kubernetes_step_2" {
     kubeconf_host = module.k3s_servers.kubeconf.cluster.host
   }
 
-  depends_on = [
-
-  ]
+  depends_on = []
 }
