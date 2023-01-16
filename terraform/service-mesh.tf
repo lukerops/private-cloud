@@ -135,6 +135,10 @@ resource "helm_release" "linkerd_crds" {
   wait_for_jobs    = true
 }
 
+data "http" "linkerd_control_plane_ha" {
+  url = "https://raw.githubusercontent.com/linkerd/linkerd2/stable-2.12.3/charts/linkerd-control-plane/values-ha.yaml"
+}
+
 resource "helm_release" "linkerd_control_plane" {
   provider = helm.step_2
 
@@ -153,6 +157,7 @@ resource "helm_release" "linkerd_control_plane" {
   }
 
   values = [
+    data.http.linkerd_control_plane_ha.response_body,
     <<-EOT
     identity:
       issuer:
