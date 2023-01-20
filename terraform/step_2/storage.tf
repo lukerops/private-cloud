@@ -13,3 +13,26 @@ resource "kubernetes_manifest" "longhorn_traefik_middleware" {
     EOT
   )
 }
+
+resource "kubernetes_manifest" "longhorn_servicemonitor" {
+  manifest = yamldecode(
+    <<-EOT
+    apiVersion: monitoring.coreos.com/v1
+    kind: ServiceMonitor
+    metadata:
+      name: longhorn-servicemonitor
+      namespace: ${data.terraform_remote_state.step_1.outputs.tools.longhorn.namespace}
+      labels:
+        name: longhorn-servicemonitor
+    spec:
+      selector:
+        matchLabels:
+          app: longhorn-manager
+      namespaceSelector:
+        matchNames:
+        - ${data.terraform_remote_state.step_1.outputs.tools.longhorn.namespace}
+      endpoints:
+      - port: manager
+    EOT
+  )
+}
