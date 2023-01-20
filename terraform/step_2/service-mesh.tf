@@ -177,3 +177,59 @@ resource "helm_release" "linkerd_viz" {
     EOT
   ]
 }
+
+# Precisamos remover o Header Origin para que o tap funcione
+# https://github.com/linkerd/linkerd2/issues/5897
+resource "kubernetes_manifest" "linkerd_traefik_middleware" {
+  manifest = yamldecode(
+    <<-EOT
+    apiVersion: traefik.containo.us/v1alpha1
+    kind: Middleware
+    metadata:
+      name: linkerd-viz-dashboard-header
+      namespace: ${helm_release.linkerd_viz.namespace}
+    spec:
+      headers:
+        customRequestHeaders:
+          Host: "web.linkerd-viz.svc.cluster.local"
+          Origin: ""
+          l5d-dst-override: "web.linkerd-viz.svc.cluster.local:8084"
+    EOT
+  )
+}
+
+resource "kubernetes_ingress_v1" "linkerd_viz" {
+  metadata {
+    name      = "linkerd-viz-dashboard"
+    namespace = helm_release.linkerd_viz.namespace
+    annotations = {
+      "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
+      "traefik.ingress.kubernetes.io/router.tls"         = "true"
+      "traefik.ingress.kubernetes.io/router.middlewares" = "${helm_release.linkerd_viz.namespace}-${kubernetes_manifest.linkerd_traefik_middleware.manifest.metadata.name}@kubernetescrd"
+      "cert-manager.io/cluster-issuer"                   = "selfsigned"
+    }
+  }
+
+  spec {
+    tls {
+      hosts       = ["linkerd.network.k8s.homecluster.local"]
+      secret_name = "linkerd-viz-dashboard-tls"
+    }
+    rule {
+      host = "linkerd.network.k8s.homecluster.local"
+      http {
+        path {
+          path = "/"
+          backend {
+            service {
+              name = "web"
+              port {
+                number = 8084
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
