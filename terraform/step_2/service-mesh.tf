@@ -211,10 +211,13 @@ resource "kubernetes_ingress_v1" "linkerd_viz" {
   }
 
   spec {
+    ingress_class_name = "traefik"
+
     tls {
       hosts       = ["linkerd.network.k8s.homecluster.local"]
       secret_name = "linkerd-viz-dashboard-tls"
     }
+
     rule {
       host = "linkerd.network.k8s.homecluster.local"
       http {
