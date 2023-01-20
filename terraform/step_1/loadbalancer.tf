@@ -8,7 +8,11 @@ resource "helm_release" "metallb" {
   create_namespace = true
   wait_for_jobs    = true
 
-  depends_on = [
-    module.k3s_agents,
+  values = [
+    <<-EOT
+    controller:
+      podAnnotations:
+        linkerd.io/inject: enabled
+    EOT
   ]
 }

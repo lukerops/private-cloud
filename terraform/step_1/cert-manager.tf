@@ -17,6 +17,8 @@ resource "helm_release" "cert_manager" {
     webhook:
       networkPolicy:
         enabled: false
+    podAnnotations:
+      linkerd.io/inject: enabled
     EOT
   ]
 

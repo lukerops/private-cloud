@@ -11,6 +11,10 @@ resource "helm_release" "kube_prometheus_stack" {
   values = [
     <<-EOT
     alertmanager:
+      alertmanagerSpec:
+        podMetadata:
+          annotations:
+            linkerd.io/inject: enabled
       ingress:
         enabled: true
         annotations:
@@ -26,6 +30,8 @@ resource "helm_release" "kube_prometheus_stack" {
               - alertmanager.monitoring.k8s.homecluster.local
 
     grafana:
+      podAnnotations:
+        linkerd.io/inject: enabled
       ingress:
         enabled: true
         annotations:
@@ -60,6 +66,9 @@ resource "helm_release" "kube_prometheus_stack" {
       prometheusSpec:
         serviceMonitorSelectorNilUsesHelmValues: false
         podMonitorSelectorNilUsesHelmValues: false
+        podMetadata:
+          annotations:
+            linkerd.io/inject: enabled
         storageSpec:
           volumeClaimTemplate:
             spec:

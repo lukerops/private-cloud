@@ -11,10 +11,11 @@ resource "helm_release" "coredns" {
     <<-EOT
     service:
       clusterIP: ${local.coredns_ip}
-
     resources:
       requests:
         memory: 70Mi
+    podAnnotations:
+      linkerd.io/inject: enabled
     EOT
   ]
 
