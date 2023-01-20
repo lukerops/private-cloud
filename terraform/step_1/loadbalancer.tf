@@ -10,6 +10,13 @@ resource "helm_release" "metallb" {
 
   values = [
     <<-EOT
+    prometheus:
+      serviceAccount: kube-prometheus-stack-prometheus
+      namespace: ${helm_release.kube_prometheus_stack.namespace}
+      serviceMonitor:
+        enabled: true
+      prometheusRule:
+        enabled: true
     controller:
       podAnnotations:
         linkerd.io/inject: enabled
