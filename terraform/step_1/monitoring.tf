@@ -16,6 +16,7 @@ resource "helm_release" "kube_prometheus_stack" {
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure
           traefik.ingress.kubernetes.io/router.tls: "true"
+          traefik.ingress.kubernetes.io/router.middlewares: monitoring-kube-prometheus-stack-alertmanager-header@kubernetescrd
           cert-manager.io/cluster-issuer: selfsigned
         hosts:
           - alertmanager.monitoring.k8s.homecluster.local
@@ -30,8 +31,8 @@ resource "helm_release" "kube_prometheus_stack" {
         annotations:
           traefik.ingress.kubernetes.io/router.entrypoints: websecure
           traefik.ingress.kubernetes.io/router.tls: "true"
+          traefik.ingress.kubernetes.io/router.middlewares: monitoring-kube-prometheus-stack-grafana-header@kubernetescrd
           cert-manager.io/cluster-issuer: selfsigned
-          ingress.kubernetes.io/custom-request-headers: l5d-dst-override:kube-prometheus-grafana.monitoring.svc.cluster.local:80
         hosts:
           - grafana.monitoring.k8s.homecluster.local
         tls:
