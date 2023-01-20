@@ -2,7 +2,7 @@ resource "helm_release" "traefik" {
   name       = "traefik"
   repository = "https://helm.traefik.io/traefik"
   chart      = "traefik"
-  version    = "10.24.3"
+  version    = "20.8.0"
 
   namespace        = "traefik"
   create_namespace = true
@@ -13,27 +13,23 @@ resource "helm_release" "traefik" {
 
   values = [
     <<-EOT
+    deployment:
+      podAnnotations:
+        linkerd.io/inject: ingress
     additionalArguments:
       - --entryPoints.web.http.redirections.entryPoint.to=websecure
       - --entryPoints.web.http.redirections.entryPoint.scheme=https
-
     service:
       annotations:
         metallb.universe.tf/address-pool: cloud-provider
-
-    ingressClass:
-      enabled: true
-      isDefaultClass: true
-
     ingressRoute:
       dashboard:
         enabled: false
-
     ports:
       web:
         port: 80
       websecure:
-        asDefault: true
+        # asDefault: true
         port: 443
     EOT
   ]
