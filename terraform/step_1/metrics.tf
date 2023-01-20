@@ -1,6 +1,4 @@
 resource "helm_release" "metrics_server" {
-  provider = helm.step_1
-
   name       = "metrics-server"
   repository = "https://kubernetes-sigs.github.io/metrics-server/"
   chart      = "metrics-server"
@@ -18,6 +16,6 @@ resource "helm_release" "metrics_server" {
   ]
 
   depends_on = [
-    helm_release.kube_prometheus,
+    helm_release.kube_prometheus_stack,
   ]
 }

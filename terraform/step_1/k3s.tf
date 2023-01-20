@@ -2,7 +2,7 @@ module "k3s_servers" {
   source = "./modules/k3s/server"
 
   versioning = {
-    version = "v1.24"
+    version = "v1.25"
   }
 
   kubeapi_ip = local.kubeapi_ip
@@ -12,11 +12,11 @@ module "k3s_servers" {
     "--etcd-expose-metrics",
 
     # configuração usada em produção
-    # "--disable=coredns,servicelb,traefik,local-storage,metrics-server",
+    "--disable=coredns,servicelb,traefik,local-storage,metrics-server",
 
     # configuração usada nos testes locais
-    "--disable=coredns,servicelb,traefik,metrics-server",
-    "--default-local-storage-path=/mnt",
+    # "--disable=coredns,servicelb,traefik,metrics-server",
+    # "--default-local-storage-path=/mnt",
 
     "--flannel-backend=none",
     "--disable-helm-controller",
@@ -37,5 +37,13 @@ module "k3s_agents" {
   depends_on = [
     module.kube_vip,
     module.kubeovn,
+  ]
+}
+
+resource "time_sleep" "wait_k3s_agents" {
+  create_duration = "30s"
+
+  depends_on = [
+    module.k3s_agents,
   ]
 }

@@ -3,8 +3,6 @@
 # for ns in $(kubectl get namespaces -o 'name' | cut -d '/' -f2); do kubectl rollout restart deployment -n $ns; done
 
 resource "kubernetes_namespace" "linkerd" {
-  provider = kubernetes.step_2
-
   metadata {
     name = "linkerd"
     labels = {
@@ -14,8 +12,6 @@ resource "kubernetes_namespace" "linkerd" {
 }
 
 resource "kubernetes_manifest" "linkerd_ca_certificate" {
-  provider = kubernetes.step_2
-
   manifest = yamldecode(
     <<-EOT
     apiVersion: cert-manager.io/v1
@@ -51,8 +47,6 @@ resource "kubernetes_manifest" "linkerd_ca_certificate" {
 }
 
 resource "kubernetes_manifest" "linkerd_issuer" {
-  provider = kubernetes.step_2
-
   manifest = yamldecode(
     <<-EOT
     apiVersion: cert-manager.io/v1
@@ -68,8 +62,6 @@ resource "kubernetes_manifest" "linkerd_issuer" {
 }
 
 resource "kubernetes_manifest" "linkerd_certificate" {
-  provider = kubernetes.step_2
-
   manifest = yamldecode(
     <<-EOT
     apiVersion: cert-manager.io/v1
@@ -114,8 +106,6 @@ resource "time_sleep" "wait_linkerd_certificate_secret" {
 }
 
 data "kubernetes_secret" "linkerd_certificate" {
-  provider = kubernetes.step_2
-
   metadata {
     name      = time_sleep.wait_linkerd_certificate_secret.triggers.secretName
     namespace = kubernetes_namespace.linkerd.metadata[0].name
@@ -123,8 +113,6 @@ data "kubernetes_secret" "linkerd_certificate" {
 }
 
 resource "helm_release" "linkerd_crds" {
-  provider = helm.step_2
-
   name       = "linkerd-crds"
   repository = "https://helm.linkerd.io/stable"
   chart      = "linkerd-crds"
@@ -140,8 +128,6 @@ data "http" "linkerd_control_plane_ha" {
 }
 
 resource "helm_release" "linkerd_control_plane" {
-  provider = helm.step_2
-
   name       = "linkerd-control-plane"
   repository = helm_release.linkerd_crds.repository
   chart      = "linkerd-control-plane"
@@ -164,17 +150,14 @@ resource "helm_release" "linkerd_control_plane" {
         scheme: kubernetes.io/tls
     podMonitor:
       enabled: true
-    EOT
-  ]
 
-  depends_on = [
-    helm_release.kube_prometheus,
+    # TODO: remover quando tiver 3+ agent nodes
+    enablePodAntiAffinity: false
+    EOT
   ]
 }
 
 resource "helm_release" "linkerd_viz" {
-  provider = helm.step_2
-
   name       = "linkerd-viz"
   repository = helm_release.linkerd_control_plane.repository
   chart      = "linkerd-viz"
@@ -188,7 +171,7 @@ resource "helm_release" "linkerd_viz" {
     <<-EOT
     linkerdNamespace: ${helm_release.linkerd_crds.namespace}
     linkerdVersion: ${helm_release.linkerd_control_plane.metadata[0].app_version}
-    prometheusUrl: http://prometheus-operated.${helm_release.kube_prometheus.namespace}.svc.cluster.local:9090
+    prometheusUrl: http://prometheus-operated.${data.terraform_remote_state.step_1.outputs.tools.kube_prometheus_stack.namespace}.svc.cluster.local:9090
     prometheus:
       enabled: false
     EOT

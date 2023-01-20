@@ -1,14 +1,11 @@
-resource "helm_release" "kube_prometheus" {
-  provider = helm.step_1
-
-  name       = "kube-prometheus"
+resource "helm_release" "kube_prometheus_stack" {
+  name       = "kube-prometheus-stack"
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
   version    = "43.3.0"
 
   namespace        = "monitoring"
   create_namespace = true
-  wait             = true
   wait_for_jobs    = true
 
   values = [
@@ -34,6 +31,7 @@ resource "helm_release" "kube_prometheus" {
           traefik.ingress.kubernetes.io/router.entrypoints: websecure
           traefik.ingress.kubernetes.io/router.tls: "true"
           cert-manager.io/cluster-issuer: selfsigned
+          ingress.kubernetes.io/custom-request-headers: l5d-dst-override:kube-prometheus-grafana.monitoring.svc.cluster.local:80
         hosts:
           - grafana.monitoring.k8s.homecluster.local
         tls:
@@ -64,11 +62,17 @@ resource "helm_release" "kube_prometheus" {
         storageSpec:
           volumeClaimTemplate:
             spec:
+              # storageClassName: ceph-filesystem
               accessModes:
                 - ReadWriteOnce
               resources:
                 requests:
-                  storage: 5Gi
+                  storage: 10Gi
     EOT
+  ]
+
+  depends_on = [
+    module.k3s_agents,
+    helm_release.longhorn,
   ]
 }

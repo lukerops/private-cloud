@@ -4,7 +4,8 @@ resource "time_sleep" "wait_server" {
   triggers = merge(
     ssh_resource.server_create[local.nodes_hosts[0]].triggers,
     {
-      host = local.nodes_hosts[0]
+      host       = local.nodes_hosts[0],
+      kubeapi_ip = local.kubeapi_ip,
     },
   )
 }

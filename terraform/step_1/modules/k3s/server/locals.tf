@@ -52,7 +52,7 @@ locals {
   kubeconf_raw = yamldecode(ssh_sensitive_resource.kubeconf.result)
   kubeconf = {
     cluster = {
-      host           = "https://${local.kubeapi_ip}:6443"
+      host           = "https://${time_sleep.wait_server.triggers.kubeapi_ip}:6443"
       ca_certificate = base64decode(local.kubeconf_raw.clusters[0].cluster.certificate-authority-data)
     }
     client = {

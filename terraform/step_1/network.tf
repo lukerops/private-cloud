@@ -1,16 +1,12 @@
 module "kube_vip" {
   source = "./modules/kubevip"
 
-  providers = {
-    kubernetes = kubernetes.step_1
-  }
-
   versioning = {
     version = "v0.5.7"
   }
 
   address   = module.k3s_servers.kubeapi_ip
-  interface = "enp1s0"
+  interface = "eth0"
 }
 
 module "kubeovn" {

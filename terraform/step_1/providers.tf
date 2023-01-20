@@ -35,8 +35,6 @@ terraform {
 }
 
 provider "kubernetes" {
-  alias = "step_1"
-
   client_certificate     = module.k3s_servers.kubeconf.client.certificate
   client_key             = module.k3s_servers.kubeconf.client.key
   cluster_ca_certificate = module.k3s_servers.kubeconf.cluster.ca_certificate
@@ -44,32 +42,10 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  alias = "step_1"
-
   kubernetes {
     client_certificate     = module.k3s_servers.kubeconf.client.certificate
     client_key             = module.k3s_servers.kubeconf.client.key
     cluster_ca_certificate = module.k3s_servers.kubeconf.cluster.ca_certificate
-    host                   = time_sleep.wait_kubernetes_step_1.triggers.kubeconf_host
-  }
-}
-
-provider "kubernetes" {
-  alias = "step_2"
-
-  client_certificate     = module.k3s_servers.kubeconf.client.certificate
-  client_key             = module.k3s_servers.kubeconf.client.key
-  cluster_ca_certificate = module.k3s_servers.kubeconf.cluster.ca_certificate
-  host                   = time_sleep.wait_helm_step_1.triggers.kubeconf_host
-}
-
-provider "helm" {
-  alias = "step_2"
-
-  kubernetes {
-    client_certificate     = module.k3s_servers.kubeconf.client.certificate
-    client_key             = module.k3s_servers.kubeconf.client.key
-    cluster_ca_certificate = module.k3s_servers.kubeconf.cluster.ca_certificate
-    host                   = time_sleep.wait_kubernetes_step_2.triggers.kubeconf_host
+    host                   = module.k3s_servers.kubeconf.cluster.host
   }
 }

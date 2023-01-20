@@ -1,6 +1,4 @@
 resource "helm_release" "coredns" {
-  provider = helm.step_1
-
   name       = "coredns"
   repository = "https://coredns.github.io/helm"
   chart      = "coredns"
@@ -18,5 +16,9 @@ resource "helm_release" "coredns" {
       requests:
         memory: 70Mi
     EOT
+  ]
+
+  depends_on = [
+    module.k3s_agents,
   ]
 }
