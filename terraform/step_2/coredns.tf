@@ -10,16 +10,12 @@ resource "helm_release" "coredns" {
   values = [
     <<-EOT
     service:
-      clusterIP: ${local.coredns_ip}
+      clusterIP: ${data.terraform_remote_state.step_1.outputs.coredns_ip}
     resources:
       requests:
         memory: 70Mi
     podAnnotations:
       linkerd.io/inject: enabled
     EOT
-  ]
-
-  depends_on = [
-    module.k3s_agents,
   ]
 }

@@ -35,9 +35,4 @@ resource "helm_release" "longhorn" {
       replicaAutoBalance: best-effort
     EOT
   ]
-
-  depends_on = [
-    kubernetes_labels.nodes,
-    kubernetes_annotations.nodes,
-  ]
 }

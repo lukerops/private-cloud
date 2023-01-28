@@ -82,7 +82,6 @@ resource "helm_release" "kube_prometheus_stack" {
   ]
 
   depends_on = [
-    module.k3s_agents,
     helm_release.longhorn,
   ]
 }

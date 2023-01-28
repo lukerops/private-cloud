@@ -5,11 +5,11 @@ resource "kubernetes_manifest" "longhorn_traefik_middleware" {
     kind: Middleware
     metadata:
       name: longhorn-frontend-header
-      namespace: ${data.terraform_remote_state.step_1.outputs.tools.longhorn.namespace}
+      namespace: ${data.terraform_remote_state.step_2.outputs.tools.longhorn.namespace}
     spec:
       headers:
         customRequestHeaders:
-          l5d-dst-override: "longhorn-frontend.${data.terraform_remote_state.step_1.outputs.tools.longhorn.namespace}.svc.cluster.local:80"
+          l5d-dst-override: "longhorn-frontend.${data.terraform_remote_state.step_2.outputs.tools.longhorn.namespace}.svc.cluster.local:80"
     EOT
   )
 }
@@ -21,7 +21,7 @@ resource "kubernetes_manifest" "longhorn_servicemonitor" {
     kind: ServiceMonitor
     metadata:
       name: longhorn-servicemonitor
-      namespace: ${data.terraform_remote_state.step_1.outputs.tools.longhorn.namespace}
+      namespace: ${data.terraform_remote_state.step_2.outputs.tools.longhorn.namespace}
       labels:
         name: longhorn-servicemonitor
     spec:
@@ -30,7 +30,7 @@ resource "kubernetes_manifest" "longhorn_servicemonitor" {
           app: longhorn-manager
       namespaceSelector:
         matchNames:
-        - ${data.terraform_remote_state.step_1.outputs.tools.longhorn.namespace}
+        - ${data.terraform_remote_state.step_2.outputs.tools.longhorn.namespace}
       endpoints:
       - port: manager
     EOT

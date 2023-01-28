@@ -5,11 +5,11 @@ resource "kubernetes_manifest" "grafana_traefik_middleware" {
     kind: Middleware
     metadata:
       name: kube-prometheus-stack-grafana-header
-      namespace: ${data.terraform_remote_state.step_1.outputs.tools.kube_prometheus_stack.namespace}
+      namespace: ${data.terraform_remote_state.step_2.outputs.tools.kube_prometheus_stack.namespace}
     spec:
       headers:
         customRequestHeaders:
-          l5d-dst-override: "kube-prometheus-stack-grafana.${data.terraform_remote_state.step_1.outputs.tools.kube_prometheus_stack.namespace}.svc.cluster.local:80"
+          l5d-dst-override: "kube-prometheus-stack-grafana.${data.terraform_remote_state.step_2.outputs.tools.kube_prometheus_stack.namespace}.svc.cluster.local:80"
     EOT
   )
 }
@@ -21,11 +21,11 @@ resource "kubernetes_manifest" "alertmanager_traefik_middleware" {
     kind: Middleware
     metadata:
       name: kube-prometheus-stack-alertmanager-header
-      namespace: ${data.terraform_remote_state.step_1.outputs.tools.kube_prometheus_stack.namespace}
+      namespace: ${data.terraform_remote_state.step_2.outputs.tools.kube_prometheus_stack.namespace}
     spec:
       headers:
         customRequestHeaders:
-          l5d-dst-override: "kube-prometheus-stack-alertmanager.${data.terraform_remote_state.step_1.outputs.tools.kube_prometheus_stack.namespace}.svc.cluster.local:9093"
+          l5d-dst-override: "kube-prometheus-stack-alertmanager.${data.terraform_remote_state.step_2.outputs.tools.kube_prometheus_stack.namespace}.svc.cluster.local:9093"
     EOT
   )
 }

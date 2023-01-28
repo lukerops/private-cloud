@@ -171,7 +171,7 @@ resource "helm_release" "linkerd_viz" {
     <<-EOT
     linkerdNamespace: ${helm_release.linkerd_crds.namespace}
     linkerdVersion: ${helm_release.linkerd_control_plane.metadata[0].app_version}
-    prometheusUrl: http://prometheus-operated.${data.terraform_remote_state.step_1.outputs.tools.kube_prometheus_stack.namespace}.svc.cluster.local:9090
+    prometheusUrl: http://prometheus-operated.${data.terraform_remote_state.step_2.outputs.tools.kube_prometheus_stack.namespace}.svc.cluster.local:9090
     prometheus:
       enabled: false
     EOT
@@ -198,41 +198,72 @@ resource "kubernetes_manifest" "linkerd_traefik_middleware" {
   )
 }
 
-resource "kubernetes_ingress_v1" "linkerd_viz" {
-  metadata {
-    name      = "linkerd-viz-dashboard"
-    namespace = helm_release.linkerd_viz.namespace
-    annotations = {
-      "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
-      "traefik.ingress.kubernetes.io/router.tls"         = "true"
-      "traefik.ingress.kubernetes.io/router.middlewares" = "${helm_release.linkerd_viz.namespace}-${kubernetes_manifest.linkerd_traefik_middleware.manifest.metadata.name}@kubernetescrd"
-      "cert-manager.io/cluster-issuer"                   = "selfsigned"
-    }
-  }
-
-  spec {
-    ingress_class_name = "traefik"
-
-    tls {
-      hosts       = ["linkerd.network.k8s.homecluster.local"]
-      secret_name = "linkerd-viz-dashboard-tls"
-    }
-
-    rule {
-      host = "linkerd.network.k8s.homecluster.local"
-      http {
-        path {
-          path = "/"
-          backend {
-            service {
-              name = "web"
-              port {
-                number = 8084
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+resource "kubernetes_manifest" "ingress_linkerd_viz" {
+  manifest = yamldecode(
+    <<-EOT
+    apiVersion: networking.k8s.io/v1
+    kind: Ingress
+    metadata:
+      name: linkerd-viz-dashboard
+      namespace: ${helm_release.linkerd_viz.namespace}
+      annotations:
+        traefik.ingress.kubernetes.io/router.entrypoints: websecure
+        traefik.ingress.kubernetes.io/router.tls: "true"
+        traefik.ingress.kubernetes.io/router.middlewares: ${helm_release.linkerd_viz.namespace}-${kubernetes_manifest.linkerd_traefik_middleware.manifest.metadata.name}@kubernetescrd
+        cert-manager.io/cluster-issuer: selfsigned
+    spec:
+      ingressClassName: traefik
+      rules:
+        - host: linkerd.network.k8s.homecluster.local
+          http:
+            paths:
+              - path: /
+                pathType: Prefix
+                backend:
+                  service:
+                    name: web
+                    port:
+                      number: 8084
+      tls:
+        - secretName: linkerd-viz-dashboard-tls
+          hosts:
+            - linkerd.network.k8s.homecluster.local
+    EOT
+  )
 }
+
+# resource "kubernetes_ingress_v1" "linkerd_viz" {
+#   metadata {
+#     name      = "linkerd-viz-dashboard"
+#     namespace = helm_release.linkerd_viz.namespace
+#     annotations = {
+#       "traefik.ingress.kubernetes.io/router.entrypoints" = "websecure"
+#       "traefik.ingress.kubernetes.io/router.tls"         = "true"
+#       "traefik.ingress.kubernetes.io/router.middlewares" = "${helm_release.linkerd_viz.namespace}-${kubernetes_manifest.linkerd_traefik_middleware.manifest.metadata.name}@kubernetescrd"
+#       "cert-manager.io/cluster-issuer"                   = "selfsigned"
+#     }
+#   }
+#   spec {
+#     ingress_class_name = "traefik"
+#     rule {
+#       host = "linkerd.network.k8s.homecluster.local"
+#       http {
+#         path {
+#           path = "/"
+#           backend {
+#             service {
+#               name = "web"
+#               port {
+#                 number = 8084
+#               }
+#             }
+#           }
+#         }
+#       }
+#     }
+#     tls {
+#       hosts       = ["linkerd.network.k8s.homecluster.local"]
+#       secret_name = "linkerd-viz-dashboard-tls"
+#     }
+#   }
+# }

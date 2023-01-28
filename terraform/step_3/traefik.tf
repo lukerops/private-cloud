@@ -5,7 +5,7 @@ resource "kubernetes_manifest" "traefik_dashboard_certificate" {
     kind: Certificate
     metadata:
       name: traefik-dashboard
-      namespace: ${data.terraform_remote_state.step_1.outputs.tools.traefik.namespace}
+      namespace: ${data.terraform_remote_state.step_2.outputs.tools.traefik.namespace}
     spec:
       dnsNames:
         - traefik.network.k8s.homecluster.local
@@ -24,7 +24,7 @@ resource "kubernetes_manifest" "traefik_dashboard" {
     kind: IngressRoute
     metadata:
       name: dashboard
-      namespace: ${data.terraform_remote_state.step_1.outputs.tools.traefik.namespace}
+      namespace: ${data.terraform_remote_state.step_2.outputs.tools.traefik.namespace}
     spec:
       entryPoints:
         - websecure

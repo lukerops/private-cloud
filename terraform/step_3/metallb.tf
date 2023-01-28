@@ -5,7 +5,7 @@ resource "kubernetes_manifest" "metallb_l2advertisement" {
     kind: L2Advertisement
     metadata:
       name: production
-      namespace: ${data.terraform_remote_state.step_1.outputs.tools.metallb.namespace}
+      namespace: ${data.terraform_remote_state.step_2.outputs.tools.metallb.namespace}
     EOT
   )
 }
@@ -17,7 +17,7 @@ resource "kubernetes_manifest" "metallb_ipaddresspool" {
     kind: IPAddressPool
     metadata:
       name: cloud-provider
-      namespace: ${data.terraform_remote_state.step_1.outputs.tools.metallb.namespace}
+      namespace: ${data.terraform_remote_state.step_2.outputs.tools.metallb.namespace}
     spec:
       addresses:
         - 10.8.0.208/28

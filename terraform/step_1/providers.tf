@@ -7,11 +7,6 @@ terraform {
       version = ">= 2.13.1, < 3.0.0"
     }
 
-    helm = {
-      source  = "hashicorp/helm"
-      version = ">= 2.6.0, < 3.0.0"
-    }
-
     random = {
       source  = "hashicorp/random"
       version = ">= 3.4.3, < 4.0.0"
@@ -39,13 +34,4 @@ provider "kubernetes" {
   client_key             = module.k3s_servers.kubeconf.client.key
   cluster_ca_certificate = module.k3s_servers.kubeconf.cluster.ca_certificate
   host                   = "https://${sort([for node in module.k3s_servers.nodes : node.host])[0]}:6443"
-}
-
-provider "helm" {
-  kubernetes {
-    client_certificate     = module.k3s_servers.kubeconf.client.certificate
-    client_key             = module.k3s_servers.kubeconf.client.key
-    cluster_ca_certificate = module.k3s_servers.kubeconf.cluster.ca_certificate
-    host                   = module.k3s_servers.kubeconf.cluster.host
-  }
 }

@@ -33,8 +33,4 @@ resource "helm_release" "traefik" {
         port: 443
     EOT
   ]
-
-  depends_on = [
-    module.k3s_agents,
-  ]
 }
